@@ -1,102 +1,117 @@
-// 1) set up the chart
-// =================================
-var svgWidth = 1000;
+// USED INSTRUCTOR LED AS A TEMPLATE
+// YOUR CODE HERE 
+var svgWidth = 960;
 var svgHeight = 500;
-var margin = {top: 40, right: 40, bottom: 80, left: 80};
+
+var margin = {
+  top: 20,
+  right: 40,
+  bottom: 80,
+  left: 100
+};
+
 var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
 
-// 2) create a SVG wrapper because they are SEXY and will hold the chart
+// Create an SVG wrapper, append an SVG group that will hold our chart, 
+//and shift the latter by left and top margins.
 var svg = d3
   .select("#scatter")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight);
 
-// 3) append the SVG group
+// Append a group to the SVG area and shift ('translate') it to the right and down to adhere
+// to the margins set in the "chartMargin" object.
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-// 4) import data from csv using d3 and then parse the data
-d3.csv("../assets/data/data.csv").then(function(healthData) {
-   healthData.forEach(function(data) {
+// Load data from data.csv
+d3.csv("assets/js/data.csv").then(function(statedata, err) {
+  if (err) throw err;
+
+  // parse data
+  statedata.forEach(function(data) {
     data.poverty = +data.poverty;
-    data.healthcare = +data.healthcare;
+    data.smokes = +data.smokes;
+    console.log("This works")
   });
 
-// 5) make scale functions and axis functions
-  var xLinearScale = d3.scaleLinear().range([0, width]);
-  var yLinearScale = d3.scaleLinear().range([height, 0]);
-  var bottomAxis = d3.axisBottom(xLinearScale);
+
+  // Create Scales
+  var xScale = d3.scaleLinear()
+    .domain([8, d3.max(statedata, d => d.poverty)])
+    .range([0, width]);
+
+  var yLinearScale = d3.scaleLinear()
+    .domain([4, d3.max(statedata, d => d.smokes)])
+    .range([height, 0]);
+
+  // Create Axes
+
+  var bottomAxis = d3.axisBottom(xScale);
   var leftAxis = d3.axisLeft(yLinearScale);
-  var xMin;
-  var xMax;
-  var yMin;
-  var yMax;
-  
-  xMin = d3.min(healthData, function(data) {
-      return data.healthcare;
-  });
-  
-  xMax = d3.max(healthData, function(data) {
-      return data.healthcare;
-  });
-  
-  yMin = d3.min(healthData, function(data) {
-      return data.poverty;
-  });
-  
-  yMax = d3.max(healthData, function(data) {
-      return data.poverty;
-  });
-  
-  xLinearScale.domain([xMin, xMax]);
-  yLinearScale.domain([yMin, yMax]);
 
-  // 6) append Axes to the chart
-  chartGroup.append("g")
+
+  // Append the axes to the chartGroup
+  // Add bottomAxis
+chartGroup.append("g")
     .attr("transform", `translate(0, ${height})`)
     .call(bottomAxis);
-
-  chartGroup.append("g")
+  
+  
+  // Add leftAxis to the left side of the display
+chartGroup.append("g")
     .call(leftAxis);
 
-   // 7) create circles
-  var circlesGroup = chartGroup.selectAll("circle")
-  .data(healthData)
-  .enter()
-  .append("circle")
-  .attr("cx", d => xLinearScale(d.healthcare +1.5))
-  .attr("cy", d => yLinearScale(d.poverty +0.3))
-  .attr("r", "12")
-  .attr("fill", "#5F9EA0")
-  .attr("opacity", .5)
-  
-  // 8) create labels
-  chartGroup.append("text")
-  .style("font-size", "12px")
-  .selectAll("tspan")
-  .data(healthData)
-  .enter()
-  .append("tspan")
-      .attr("x", function(data) {
-          return xLinearScale(data.healthcare +1.3);
+// Create Circles
+var circlesGroup = chartGroup.selectAll("circle")
+    .data(statedata)
+    .enter()
+    .append("circle")
+    .attr("cx", d => xScale(d.poverty))
+    .attr("cy", d => yLinearScale(d.smokes))
+    .attr("r", 15)
+    .attr("class", function(d) {
+        return "stateCircle " + d.abbr;
       })
-      .attr("y", function(data) {
-          return yLinearScale(data.poverty +.2);
-      })
-      .text(function(data) {
-          return data.abbr
-      });
-  // 9) create axis labels
-  chartGroup.append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin.left + 40)
-    .attr("x", 0 - (height / 2))
-    .text("Lacks Healtcare(%)");
+    .attr("fill", "purple")
+    .attr("opacity", ".8")
 
-  chartGroup.append("text")
-    .attr("transform", `translate(${width / 2}, ${height + margin.top})`)
-    .text("In Poverty (%)");
-
+var toolTip = d3.tip()
+.attr("class", "tooltip")
+.attr([1, -1])
+.html(function(d) {
+  return (`${d.abbr}`);
 });
+
+// Create tooltip in the chart
+
+chartGroup.call(toolTip);
+
+circlesGroup.on("click", function(data) {
+    toolTip.show(data, this);
+  })
+    // onmouseout event
+    .on("mouseout", function(data, index) {
+      toolTip.hide(data);
+    });
+
+
+
+
+chartGroup.append("text")
+    .attr("transform", `translate(${width / 3}, ${height + margin.top + 20})`)
+    .text("Percentage of Population in Poverty");
+
+    // Create axes labels
+    chartGroup.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left + 40)
+      .attr("x", 0 - (height/1.2))
+      .attr("dy", "1em")
+      .attr("class", "axisText")
+      .text("Percentage of Population that Smokes");
+
+
+    });
