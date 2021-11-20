@@ -1,117 +1,112 @@
-// USED INSTRUCTOR LED AS A TEMPLATE
-// YOUR CODE HERE 
-var svgWidth = 960;
-var svgHeight = 500;
+// @TODO: YOUR CODE HERE!
 
-var margin = {
-  top: 20,
-  right: 40,
-  bottom: 80,
-  left: 100
+// SVG Area 
+var svgWidth = 960;
+var svgHeight = 600;
+
+// Margins
+
+var margin = { 
+    top: 30, 
+    right: 50, 
+    bottom: 50, 
+    left: 30
 };
+// SVG Area with margins
 
 var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
 
-// Create an SVG wrapper, append an SVG group that will hold our chart, 
-//and shift the latter by left and top margins.
+// SVG contaINER
+
 var svg = d3
   .select("#scatter")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight);
 
-// Append a group to the SVG area and shift ('translate') it to the right and down to adhere
-// to the margins set in the "chartMargin" object.
+  // Chartgroup
+
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-// Load data from data.csv
-d3.csv("assets/js/data.csv").then(function(statedata, err) {
-  if (err) throw err;
+  // Import Data (CSV document)
 
-  // parse data
-  statedata.forEach(function(data) {
+  d3.csv("assets/data/data.csv").then(function(journalismData) {
+    journalismData.forEach(function(data) {
     data.poverty = +data.poverty;
+    data.healthcare = +data.healthcare;
     data.smokes = +data.smokes;
-    console.log("This works")
+    data.age = +data.age;
+    states = data.abbr; 
+    console.log(states);
   });
 
 
-  // Create Scales
-  var xScale = d3.scaleLinear()
-    .domain([8, d3.max(statedata, d => d.poverty)])
+    // Get scales => sacleLinear
+    
+    var xLinearScale = d3.scaleLinear()
+    .domain([d3.min(journalismData, d => d.poverty),d3.max(journalismData, d => d.poverty)])
     .range([0, width]);
 
-  var yLinearScale = d3.scaleLinear()
-    .domain([4, d3.max(statedata, d => d.smokes)])
+    var yLinearScale = d3.scaleLinear()
+    .domain([d3.min(journalismData, d => d.healthcare),d3.max(journalismData, d =>d.healthcare)])
     .range([height, 0]);
 
-  // Create Axes
+    // Axis
 
-  var bottomAxis = d3.axisBottom(xScale);
-  var leftAxis = d3.axisLeft(yLinearScale);
+    var bottomAxis = d3.axisBottom(xLinearScale);
+    var leftAxis = d3.axisLeft(yLinearScale);
 
+    // Axis into SVG area 
 
-  // Append the axes to the chartGroup
-  // Add bottomAxis
-chartGroup.append("g")
+    chartGroup.append("g")
     .attr("transform", `translate(0, ${height})`)
     .call(bottomAxis);
-  
-  
-  // Add leftAxis to the left side of the display
-chartGroup.append("g")
+
+    chartGroup.append("g")
     .call(leftAxis);
 
-// Create Circles
-var circlesGroup = chartGroup.selectAll("circle")
-    .data(statedata)
+    // Append circles and bind data 
+    var circlesGroup = chartGroup.selectAll("circle")
+    .data(journalismData)
     .enter()
     .append("circle")
-    .attr("cx", d => xScale(d.poverty))
-    .attr("cy", d => yLinearScale(d.smokes))
-    .attr("r", 15)
-    .attr("class", function(d) {
-        return "stateCircle " + d.abbr;
-      })
-    .attr("fill", "purple")
-    .attr("opacity", ".8")
+    .attr("cx", d => xLinearScale(d.poverty))
+    .attr("cy", d => yLinearScale(d.healthcare))
+    .attr("r", "15")
+    .attr("fill", "steelblue")
+    .attr("stroke", "white")
+    .attr("opacity", ".5");
 
-var toolTip = d3.tip()
-.attr("class", "tooltip")
-.attr([1, -1])
-.html(function(d) {
-  return (`${d.abbr}`);
-});
+    // Append Axis titles  
+    chartGroup.append("text")
+      .attr("transform", `translate(${height / 2}, ${height + margin.top + 20})`)
+      .classed("dow-text text", true)
+      .text("In Poverty (%)");
 
-// Create tooltip in the chart
-
-chartGroup.call(toolTip);
-
-circlesGroup.on("click", function(data) {
-    toolTip.show(data, this);
-  })
-    // onmouseout event
-    .on("mouseout", function(data, index) {
-      toolTip.hide(data);
-    });
-
-
-
-
-chartGroup.append("text")
-    .attr("transform", `translate(${width / 3}, ${height + margin.top + 20})`)
-    .text("Percentage of Population in Poverty");
-
-    // Create axes labels
     chartGroup.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 0 - margin.left + 40)
-      .attr("x", 0 - (height/1.2))
-      .attr("dy", "1em")
-      .attr("class", "axisText")
-      .text("Percentage of Population that Smokes");
+      .attr("y", 0 - margin.left + 12)
+      .attr("x", 0 - (height / 2))
+      .text("Lacks Healthcare (%)");
 
+    // Text Group
+    var circleLabels = chartGroup.selectAll(null).data(journalismData).enter().append("text");
 
-    });
+    circleLabels
+      .attr("x", function(d) {
+        return xLinearScale(d.poverty);
+      })
+      .attr("y", function(d) {
+        return yLinearScale(d.healthcare);
+      })
+      .text(function(d) {
+        return d.abbr;
+      })
+      .attr("font-family", "sans-serif")
+      .attr("font-size", "10px")
+      .attr("text-anchor", "middle")
+      .attr("fill", "white");
+
+});
