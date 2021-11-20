@@ -98,6 +98,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textGroup) {
 						}
 					});
     circlesGroup.call(toolTip);
+
     // Create "mouseover" event listener to display tool tip.
 	circlesGroup.on("mouseover", function(data) {
 					toolTip.show(data, this);
@@ -293,6 +294,7 @@ function makeResponsive() {
 						// Update circles text with new values.
 						circleText = renderText(circleText, xLinearScale, yLinearScale, chosenXAxis, chosenYAxis);
 					});
+
         // Y Labels event listener.
         yLabelsGroup.selectAll("text")
 					.on("click", function() {
@@ -339,6 +341,7 @@ function makeResponsive() {
 	});
 }
 makeResponsive();
+
 // Event listener for window resize.
 // When the browser window is resized, makeResponsive() is called.
 d3.select(window).on("resize", makeResponsive);
