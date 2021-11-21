@@ -1,4 +1,5 @@
 # Please [click here](https://franco1230.github.io/16-D3-Challenge/StarterCode) for [D3 Homework - Data Journalism and D3](https://franco1230.github.io/16-D3-Challenge/StarterCode)
+# Please [click her](https://github.com/Franco1230/16-D3-Challenge/blob/main/StarterCode/assets/js/app.js) for [app.js](https://github.com/Franco1230/16-D3-Challenge/blob/main/StarterCode/assets/js/app.js)
 
 ![Newsroom](https://media.giphy.com/media/v2xIous7mnEYg/giphy.gif)
 
