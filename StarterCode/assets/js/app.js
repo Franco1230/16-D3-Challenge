@@ -1,13 +1,13 @@
 // Set original SVG dimension
-var svgWidth = 960;
-var svgHeight = 500;
+var svgWidth = 1000;
+var svgHeight = 600;
 
 // Set chart margins
 var margin = {
-	 top: 60,
+	 top: 70,
 	 right: 60,
-	 bottom: 120,
-	 left: 150
+	 bottom: 125,
+	 left: 170
 	};
 
 // Define dimensions of the chart area
@@ -309,12 +309,14 @@ function init() {
         .attr('cx', d => xLinearScale(d[chosenXAxis]))
         .attr('cy', d => yLinearScale(d[chosenYAxis]))
         .attr('r', r)
+        .style("fill", "#1e0031")
         .classed("stateCircle", true);
     
     // Create the text for each circle
     elemEnter.append("text")
         .attr("dx", d => xLinearScale(d[chosenXAxis]))
         .attr("dy", d => yLinearScale(d[chosenYAxis]))
+        .style("fill", "whitesmoke")
         .classed("stateText", true)
         .attr("font-size", parseInt(r * 0.8))
         .text(d => d.abbr);
