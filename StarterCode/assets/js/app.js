@@ -50,7 +50,7 @@ function scale(acsData, chosenAxis, xy) {
 		.range(axisRange);
   
     return linearScale;
-}
+};
 
 // Function used for updating xyAxis var upon click on axis label text
 function renderAxis(newScale, Axis, xy) {
@@ -60,7 +60,7 @@ function renderAxis(newScale, Axis, xy) {
 		.duration(1000)
 		.call(posAxis);
 	return Axis;
-}
+};
 
 // Function used for updating circles group with a transition to
 function renderCircles(elemEnter, newScale, chosenAxis, xy) {
@@ -75,7 +75,7 @@ function renderCircles(elemEnter, newScale, chosenAxis, xy) {
 			 .duration(1000)
 			 .attr(`d${xy}`, d => newScale(d[chosenAxis]));
 	return elemEnter;
-}
+};
 
 // Function used for updating circles group with new tooltip
 function updateToolTip(chosenXAxis, chosenYAxis, elemEnter) {
@@ -91,7 +91,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, elemEnter) {
 			 .on('mouseover', tool_tip.show)
 			 .on('mouseout', tool_tip.hide);   
     return elemEnter;
-}
+};
 
 // function update the scatter chart based on the selected axis label change
 function updateChart() {
@@ -141,10 +141,10 @@ function updateChart() {
                 d3.select(`[value = ${label}]`).classed("inactive", true);
                 // Rect switch axis
                 d3.select(`[value = ${xy+label}]`).classed("invisible", false);
-            }
+            };
         });
     };
-}
+};
 
 // Function updates the axis labels tooptip on the rect tag
 function updateLabelsTooltip(xy, labelEnter) {
@@ -164,7 +164,7 @@ function updateLabelsTooltip(xy, labelEnter) {
 			  .on("mousedown", tool_tip.hide);
 
     return labelEnter;
-}
+};
 
 // Function updates the rect tag into axis label group
 function updateLabelsRect(xy, xPos, labelsRect) {
@@ -189,7 +189,7 @@ function updateLabelsRect(xy, xPos, labelsRect) {
 
     // Return enter to be able to append tooltip
     return enterlabelsRect;
-}
+};
 
 // Function updates the text tag into axis label group
 function updateLabelsText(xy, xPos, labelsText) {
@@ -209,7 +209,7 @@ function updateLabelsText(xy, xPos, labelsText) {
         .classed("inactive", d => (d === chosenAxis) ? false:true)
         .text(d => labelsTitle[d])
         .on("click", updateChart);
-}
+};
 
 // Function updates the axis labels after moving one of the axes
 function updateLabel() {
@@ -230,7 +230,7 @@ function updateLabel() {
         yAxisLabels = yAxisLabels.filter(e => e !== selectedLabel);
         // Add label to xLabels labels
         xAxisLabels.push(selectedLabel);
-    }
+    };
 
     // Update group for x axis labels group of rect + text
     var xLabels = d3.select("#xLabels");
@@ -268,12 +268,12 @@ function updateLabel() {
     updateLabelsText("y", margin.top, yLabelsText);
     // Remove any excess old data
     yLabelsText.exit().remove();
-}
+};
 
 // Function initialize the chart elements
 function init() {
-    // Variable radius for circle
-    var r = 10;
+    // Radius for circles
+    var r = 15;
     // Create initial xLinearScale, yLinearScale
     var xLinearScale = scale(acsData, chosenXAxis, "x");
     var yLinearScale = scale(acsData, chosenYAxis, "y");
@@ -340,6 +340,7 @@ function init() {
         .classed("invisible", d => (d === chosenXAxis) ? true: false)
         .attr("value", d => "x" + d)
         .on("click", updateLabel);
+    
     // Update tooptip on rect
     updateLabelsTooltip("x", enterXLabelsRect);
     // Create text of the x-axis label
@@ -373,6 +374,7 @@ function init() {
         .classed("invisible", d => (d === chosenYAxis) ? true: false)
         .attr("value", d => "y" + d)
         .on("click", updateLabel);
+    
     // Update tooptip on rect
     updateLabelsTooltip("y", enterYLabelsRect);
     // Create text of the y-axis label
