@@ -32,9 +32,9 @@ var chosenYAxis = "obesity";  // Default initial y-axis label
 var xAxisLabels = ["poverty", "age", "income"];  // Default
 var yAxisLabels = ["obesity", "smokes", "healthcare"];
 var labelsTitle = {"poverty": "In Poverty (%)", 
-                   "age": "Age (Median)", 
-                   "income": "Household Income (Median)",
-                   "obesity": "Obese (%)", 
+                   "age": "Median Age", 
+                   "income": "Median Household Income",
+                   "obesity": "Obesity (%)", 
                    "smokes": "Smokes (%)", 
                    "healthcare": "Lacks Healthcare (%)"};
 var axisPadding = 20;
