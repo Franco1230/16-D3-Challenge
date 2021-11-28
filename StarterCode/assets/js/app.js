@@ -185,7 +185,7 @@ function updateLabelsRect(xy, xPos, labelsRect) {
         .classed("stateRect", true)
         .classed("invisible", d => (d === chosenAxis) ? true:false)
         .attr("value", d => xy+d)
-        .on("click", updateLabel);;
+        .on("click", updateLabel);
 
     // Return enter to be able to append tooltip
     return enterlabelsRect;
